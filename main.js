@@ -198,128 +198,142 @@ mobsTest=[
 ];
 
 idCont = 0;
+$(function() {
+  $("#showResultsButton").click(function(){
+    $('#resultado').modal('show');
+  });
+  
+  $("#calcButton").click(function(){
+    lvl = $("#lvlInput").val();
+    mlvl = $("#mlvlInput").val();
+    $("#lvlInput, #mlvlInput").removeClass("is-invalid");
+    if(lvl == null || lvl.trim() == ""){
+       $("#lvlInput").addClass("is-invalid");
+    } else if (mlvl == null || mlvl.trim() == ""){
+      $("#mlvlInput").addClass("is-invalid");
+    } else {
+      calcHuntDamage();
+    }
+  });
 
-$("#calcButton").click(function(){
-  lvl = $("#lvlInput").val();
-  mlvl = $("#mlvlInput").val();
-  $("#lvlInput, #mlvlInput").removeClass("is-invalid");
-  if(lvl == null || lvl.trim() == ""){
-     $("#lvlInput").addClass("is-invalid");
-  } else if (mlvl == null || mlvl.trim() == ""){
-    $("#mlvlInput").addClass("is-invalid");
-  } else {
-    calcHuntDamage();
-  }
+  $("#addButton").click(function(){
+    mobName = $("#nameInput").val();
+    mobQuantity = $("#quantityInput").val();
+    $("#nameInput, #quantityInput").removeClass("is-invalid");
+    if(mobName == null || mobName.trim() == ""){
+       $("#nameInput").addClass("is-invalid");
+    } else if (mobQuantity == null || mobQuantity.trim() == ""){
+      $("#quantityInput").addClass("is-invalid");
+    } else {
+      idCont++;
+      mobs.push({
+        id: idCont,
+        name: mobName,
+        quantity: mobQuantity,
+        resists: [
+          {type: "fire", resist: formatResistance("#fireResistInput")},
+          {type: "ice", resist: formatResistance("#iceResistInput")},
+          {type: "energy", resist: formatResistance("#energyResistInput")},
+          {type: "earth", resist: formatResistance("#earthResistInput")},
+          {type: "death", resist: formatResistance("#deathResistInput")},
+          {type: "holy", resist: formatResistance("#holyResistInput")},
+          {type: "physical", resist: formatResistance("#physicalResistInput")},
+        ],
+        getNotDefaultResistances: function(){
+             return this.resists.filter(resist => resist.resist != 1).sort((a, b) => {
+               return a.resist + b.resist;
+             });
+         }
+      });
+      pintarMobs();
+    }
+  });
+  
+  
 });
 
-$("#addButton").click(function(){
-  mobName = $("#nameInput").val();
-  mobQuantity = $("#quantityInput").val();
-  $("#nameInput, #quantityInput").removeClass("is-invalid");
-  if(mobName == null || mobName.trim() == ""){
-     $("#nameInput").addClass("is-invalid");
-  } else if (mobQuantity == null || mobQuantity.trim() == ""){
-    $("#quantityInput").addClass("is-invalid");
-  } else {
-    idCont++;
-    mobs.push({
-      id: idCont,
-      name: mobName,
-      quantity: mobQuantity,
-      resists: [
-        {type: "fire", resist: formatResistance("#fireResistInput")},
-        {type: "ice", resist: formatResistance("#iceResistInput")},
-        {type: "energy", resist: formatResistance("#energyResistInput")},
-        {type: "earth", resist: formatResistance("#earthResistInput")},
-        {type: "death", resist: formatResistance("#deathResistInput")},
-        {type: "holy", resist: formatResistance("#holyResistInput")},
-        {type: "physical", resist: formatResistance("#physicalResistInput")},
-      ],
-      getNotDefaultResistances: function(){
-           return this.resists.filter(resist => resist.resist != 1)
-       }
+
+  function formatResistance(id){
+    console.log($(id).val()/100 );
+    return $(id).val() != null && $(id).val().trim() != "" && !isNaN($(id).val()) ? $(id).val()/100 : 1;
+  }
+
+  function pintarMobs(){
+    console.log(mobs);
+    $("#huntMobs").html("");
+    mobs.forEach(mob=>{
+      notDefaultResistances=mob.getNotDefaultResistances();
+      htmlResistances = "";
+      notDefaultResistances.forEach(e => {
+        htmlResistances+= "<li>"+Math.round(e.resist*100)+"% "+e.type+"</li>"
+      });
+      $("#huntMobs").append('<div class="card border-primary col-md-3" style="max-width: 18rem;">'+
+            '<div class="card-header">'+
+              '<button type="button" class="btn btn-outline-danger right" onClick=deleteMob('+mob.id+')>X</button>'+
+            '</div>'+
+            '<div class="card-body text-primary">'+
+              '<h5 class="card-title">'+mob.quantity+" "+mob.name+'</h5>'+
+              '<p class="card-text"><span>Damage taken:</span><ul>'+htmlResistances+'</ul></p>'+
+            '</div>'+
+          '</div>');
     });
+  }
+
+
+  function deleteMob(idMob){
+    mobs = mobs.filter(mob => mob.id != idMob);
     pintarMobs();
   }
-});
-    
-function formatResistance(id){
-  console.log($(id).val()/100 );
-  return $(id).val() != null && $(id).val().trim() != "" && !isNaN($(id).val()) ? $(id).val()/100 : 1;
-}
 
-function pintarMobs(){
-  console.log(mobs);
-  $("#huntMobs").html("");
-  mobs.forEach(mob=>{
-    notDefaultResistances=mob.getNotDefaultResistances();
-    htmlResistances = "";
-    notDefaultResistances.forEach(e => {
-      htmlResistances+= "<li>"+Math.round(e.resist*100)+"% "+e.type+"</li>"
-    });
-    $("#huntMobs").append('<div class="card border-primary col-md-3" style="max-width: 18rem;">'+
-          '<div class="card-header">'+
-            '<button type="button" class="btn btn-outline-danger right" onClick=deleteMob('+mob.id+')>X</button>'+
-          '</div>'+
-          '<div class="card-body text-primary">'+
-            '<h5 class="card-title">'+mob.quantity+" "+mob.name+'</h5>'+
-            '<p class="card-text"><span>Damage taken:</span><ul>'+htmlResistances+'</ul></p>'+
-          '</div>'+
-        '</div>');
-  });
-}
+  function calcHuntDamage(){
+    $("#showResultsButton").show();
+    $("#resultado .modal-body").html("");
+    runes.forEach(rune=> {
+      let minAux = Math.round(rune.calculatedMinDamage(lvl,mlvl));
+      let maxAux = Math.round(rune.calculatedMaxDamage(lvl,mlvl));
+      minHunt = 0;
+      maxHunt = 0;
 
-function deleteMob(idMob){
-  mobs = mobs.filter(mob => mob.id != idMob);
-  pintarMobs();
-}
+      if(mobs.length > 0){
+        mobs.forEach(mob=>{
+          minResistCalc = 0;
+          maxResistCalc = 0;
+          mob.resists.forEach(resist =>{
+            if(rune.type == resist.type){
+              minResistCalc= minAux * resist.resist;
+              maxResistCalc= maxAux * resist.resist;
 
-function calcHuntDamage(){
-  $("#showResultsButton").show();
-  $("#resultado").html("");
-  runes.forEach(rune=> {
-    let minAux = Math.round(rune.calculatedMinDamage(lvl,mlvl));
-    let maxAux = Math.round(rune.calculatedMaxDamage(lvl,mlvl));
-    minHunt = 0;
-    maxHunt = 0;
+            }
+          });
 
-    if(mobs.length > 0){
-      console.log("--CON MOBS--");
-      console.log(mobs);
-      mobs.forEach(mob=>{
-        minResistCalc = 0;
-        maxResistCalc = 0;
-        mob.resists.forEach(resist =>{
-          if(rune.type == resist.type){
-            minResistCalc= minAux * resist.resist;
-            maxResistCalc= maxAux * resist.resist;
-
-          }
+          minHunt+=minResistCalc*mob.quantity;
+          maxHunt+=maxResistCalc*mob.quantity;
         });
 
-        minHunt+=minResistCalc*mob.quantity;
-        maxHunt+=maxResistCalc*mob.quantity;
-      });
+        $("#resultado .modal-body").append("<div class='rune'>"+
+                               "<span>Name: </span>"+rune.name+
+                               "<br>"+
+                               "<span>Type: </span>"+rune.type+
+                               "<br>"+
+                               "<span>Damage: </span>"+Math.round(minAux)+"-"+Math.round(maxAux)+
+                               "<br>"+
+                               "<span>Hunt damage: </span>"+ Math.round(minHunt)+"-"+Math.round(maxHunt)+
+                               "<hr>"+
+                               "</div");
+          $('#resultado').modal('show');
+        } else {
+          $("#resultado .modal-body").append("<div class='rune'>"+
+                               "<span>Name: </span>"+rune.name+
+                               "<br>"+
+                               "<span>Type: </span>"+rune.type+
+                               "<br>"+
+                               "<span>Damage: </span>"+Math.round(minAux)+"-"+Math.round(maxAux)+
+                               "<hr></div");
+          $('#resultado').modal('show');
+        }
+    });
 
-      $("#resultado").append("<div class='rune'>"+
-                             "<span>Name: </span>"+rune.name+
-                             "<br>"+
-                             "<span>Type: </span>"+rune.type+
-                             "<br>"+
-                             "<span>Damage: </span>"+Math.round(minAux)+"-"+Math.round(maxAux)+
-                             "<br>"+
-                             "<span>Hunt damage: </span>"+ Math.round(minHunt)+"-"+Math.round(maxHunt)+
-                             "<br><br>"+
-                             "</div");
-      } else {
-        console.log("--SIN MOBS--");
-        $("#resultado").append("<div class='rune'>"+
-                             "<span>Name: </span>"+rune.name+
-                             "<br>"+
-                             "<span>Type: </span>"+rune.type+
-                             "<br>"+
-                             "<span>Damage: </span>"+Math.round(minAux)+"-"+Math.round(maxAux)+
-                             "<br><br></div");
-      }
-  });
-}
+    $('#resultado').modal();
+  }
+    
+
