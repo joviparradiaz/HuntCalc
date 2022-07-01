@@ -1,0 +1,18 @@
+#formHuntMobs .input-group-text{
+  min-width:82px;
+}
+
+#form, #rowHunt{
+  margin-top: 20px;
+}
+
+
+.row > .card{
+  padding-right:0;
+  padding-left:0;
+  margin-right:5px;
+}
+
+.right{
+  float: right;
+}
