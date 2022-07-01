@@ -241,7 +241,7 @@ $(function() {
         ],
         getNotDefaultResistances: function(){
              return this.resists.filter(resist => resist.resist != 1).sort((a, b) => {
-               return a.resist + b.resist;
+               return b.resist - a.resist;
              });
          }
       });
@@ -254,12 +254,10 @@ $(function() {
 
 
   function formatResistance(id){
-    console.log($(id).val()/100 );
     return $(id).val() != null && $(id).val().trim() != "" && !isNaN($(id).val()) ? $(id).val()/100 : 1;
   }
 
   function pintarMobs(){
-    console.log(mobs);
     $("#huntMobs").html("");
     mobs.forEach(mob=>{
       notDefaultResistances=mob.getNotDefaultResistances();
