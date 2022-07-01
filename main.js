@@ -2,6 +2,7 @@ runes = [
   {
     name: "Thunderstorm",
     type: "energy",
+    img: "Thunderstorm_Rune.gif",
     xMin: 1,
     yMin: 6,
     xMax: 2.6,
@@ -16,6 +17,7 @@ runes = [
   {
     name: "Stone Shower",
     type: "earth",
+    img: "Stone_Shower_Rune.gif",
     xMin: 1,
     yMin: 6,
     xMax: 2.6,
@@ -30,6 +32,7 @@ runes = [
   {
     name: "GFB",
     type: "fire",
+    img: "Great_Fireball_Rune.gif",
     xMin: 1.2,
     yMin: 7,
     xMax: 2.8,
@@ -44,6 +47,7 @@ runes = [
   {
     name: "Avalanche",
     type: "ice",
+    img: "Avalanche_Rune.gif",
     xMin: 1.2,
     yMin: 7,
     xMax: 2.8,
@@ -309,9 +313,7 @@ $(function() {
         });
 
         $("#resultado .modal-body").append("<div class='rune'>"+
-                               "<span>Name: </span>"+rune.name+
-                               "<br>"+
-                               "<span>Type: </span>"+rune.type+
+                               "<img src='images/"+rune.img+"' width='32' height='32'>"+rune.name+" ("+rune.type+")"+
                                "<br>"+
                                "<span>Damage: </span>"+Math.round(minAux)+"-"+Math.round(maxAux)+
                                "<br>"+
@@ -321,9 +323,7 @@ $(function() {
           $('#resultado').modal('show');
         } else {
           $("#resultado .modal-body").append("<div class='rune'>"+
-                               "<span>Name: </span>"+rune.name+
-                               "<br>"+
-                               "<span>Type: </span>"+rune.type+
+                               "<img src='images/"+rune.img+"' width='32' height='32'>"+rune.name+" ("+rune.type+")"+
                                "<br>"+
                                "<span>Damage: </span>"+Math.round(minAux)+"-"+Math.round(maxAux)+
                                "<hr></div");
