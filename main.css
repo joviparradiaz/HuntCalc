@@ -1,5 +1,5 @@
 #formHuntMobs .input-group-text{
-  min-width:82px;
+  min-width:106px;
 }
 
 #form, #rowHunt{
@@ -15,4 +15,8 @@
 
 .right{
   float: right;
+}
+
+.input-group-text img {
+    margin-right: 10px;
 }
