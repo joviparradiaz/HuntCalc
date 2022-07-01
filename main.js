@@ -290,6 +290,9 @@ $(function() {
   function calcHuntDamage(){
     $("#showResultsButton").show();
     $("#resultado .modal-body").html("");
+    previousMin = 0;
+    previousMax = 0;
+    bestRune = "";
     runes.forEach(rune=> {
       let minAux = Math.round(rune.calculatedMinDamage(lvl,mlvl));
       let maxAux = Math.round(rune.calculatedMaxDamage(lvl,mlvl));
@@ -311,6 +314,13 @@ $(function() {
           minHunt+=minResistCalc*mob.quantity;
           maxHunt+=maxResistCalc*mob.quantity;
         });
+        
+        if(minHunt > previousMin
+          && maxHunt > previousMax){
+          previousMin = minHunt;
+          previousMax = maxHunt;
+          bestRune = "<img src='images/"+rune.img+"' width='32' height='32'>"+rune.name+" ("+rune.type+")";
+        }
 
         $("#resultado .modal-body").append("<div class='rune'>"+
                                "<img src='images/"+rune.img+"' width='32' height='32'>"+rune.name+" ("+rune.type+")"+
@@ -330,6 +340,10 @@ $(function() {
           $('#resultado').modal('show');
         }
     });
+    
+    if(bestRune != ""){
+      $("#resultado .modal-body").append("<h3>Your best choice: "+bestRune+"</h3>");
+    }
 
     $('#resultado').modal();
   }
