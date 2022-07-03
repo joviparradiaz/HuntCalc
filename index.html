@@ -20,6 +20,14 @@
     </div>
   </div>
   
+  <div class="row" style="margin-top:20px;">
+    <div class="col-md-3">
+      <label for="formControlRange">Runes needed to kill 1 mob:</label>
+      <input id="runesQuantity" type="range" min="1" max="20" value="1" onChange="$('#rangeval').html($(this).val())">
+      <span id="rangeval">1</span>
+    </div>
+  </div>
+  
   <div id="rowHunt" class="row">
     
     <div id="formHuntMobs" class="col-md-3">
