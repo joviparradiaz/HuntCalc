@@ -321,14 +321,14 @@ $(function() {
           previousMin = minHunt;
           previousMax = maxHunt;
           bestRune = "<img src='images/"+rune.img+"' width='32' height='32'>"+rune.name+" ("+rune.type+")";
-        } else if(minHunt => previousMin
-                 || maxHunt => previousMax){
+        } else if(minHunt >= previousMin
+                 || maxHunt >= previousMax){
           auxMin = 0;
           auxMax = 0;
           ausDif = 0;
           //One is bigger, calc de difference
-          if((minHunt => previousMin && maxHunt <= previousMax)
-            || (maxHunt => previousMax && minHunt <= previousMin)){
+          if((minHunt >= previousMin && maxHunt <= previousMax)
+            || (maxHunt >= previousMax && minHunt <= previousMin)){
             if((minHunt-previousMin)+(maxHunt-previousMax) > 0){
               previousMin = minHunt;
               previousMax = maxHunt;
