@@ -290,6 +290,7 @@ $(function() {
   function calcHuntDamage(){
     $("#showResultsButton").show();
     $("#resultado .modal-body").html("");
+    runesQuantity = $("#runesQuantity").val();
     previousMin = 0;
     previousMax = 0;
     bestRune = "";
@@ -311,8 +312,8 @@ $(function() {
             }
           });
 
-          minHunt+=minResistCalc*mob.quantity;
-          maxHunt+=maxResistCalc*mob.quantity;
+          minHunt+=minResistCalc*(mob.quantity*runesQuantity);
+          maxHunt+=maxResistCalc*(mob.quantity*runesQuantity);
         });
         
         if(minHunt > previousMin
